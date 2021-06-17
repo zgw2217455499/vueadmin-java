@@ -16,7 +16,7 @@ public class BaseController {
     SysUserService sysUserService;
     @GetMapping("/test")
     public Result test(){
-        int a = 5/0;
+//        int a = 5/0;
         List<SysUser> list = sysUserService.list();
         return Result.succ(list);
     }

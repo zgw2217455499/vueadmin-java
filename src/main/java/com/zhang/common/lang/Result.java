@@ -1,7 +1,6 @@
-package com.zhang.common;
+package com.zhang.common.lang;
 
 import lombok.Data;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnJava;
 
 @Data
 public class Result {

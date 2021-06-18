@@ -1,7 +1,7 @@
 package com.zhang.common.exception;
 
 
-import com.zhang.common.Result;
+import com.zhang.common.lang.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

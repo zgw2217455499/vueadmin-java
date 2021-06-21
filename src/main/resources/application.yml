@@ -11,5 +11,23 @@ spring:
     user:
       name: zzz
       password: zzz@1224
+  redis:
+    database: 0
+    host: 47.97.103.236
+    port: 6379
+    password: zzz@1224
+    jedis:
+      pool:
+        max-active: 1024
+        max-wait: 3000
+        max-idle: 1024
+        min-idle: 0
+    timeout: 5000
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**Mapper.xml
+zhang:
+  jwt:
+    header: Authorization
+    expire: 62400 #过期时间7天
+    secret: zhanggewendesecurityjwtmima1234567
+

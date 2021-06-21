@@ -1,5 +1,6 @@
 package com.zhang.config;
 
+import com.zhang.security.CaptchaFilter;
 import com.zhang.security.LoginFailureHandler;
 import com.zhang.security.LoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 /**
@@ -27,16 +29,18 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    private LoginSuccessHandler loginSuccessHandler;
+    LoginSuccessHandler loginSuccessHandler;
     @Autowired
-    private LoginFailureHandler loginFailureHandler;
+    LoginFailureHandler loginFailureHandler;
+    @Autowired
+    CaptchaFilter captchaFilter;
     //定义静态资源 和 放行的路径
     private static final String[] URL_WHITELIST = {
 
             "/login",
             "/logout",
             "/captcha",
-            "/favicon.ico",
+            "/favicon.ico"
 
     };
 
@@ -53,9 +57,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 //默认配置 授权静态资源和一些路径 其他请求需要认证
-                .and().authorizeRequests()
-                .antMatchers(URL_WHITELIST).permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers(URL_WHITELIST)
+                .permitAll()
                 .anyRequest().authenticated()
+                //添加验证码过滤器
+                .and()
+                .addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
         ;
     }
 }

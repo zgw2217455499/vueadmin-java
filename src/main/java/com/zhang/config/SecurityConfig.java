@@ -1,9 +1,8 @@
 package com.zhang.config;
 
-import com.zhang.security.CaptchaFilter;
-import com.zhang.security.LoginFailureHandler;
-import com.zhang.security.LoginSuccessHandler;
+import com.zhang.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,6 +33,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     LoginFailureHandler loginFailureHandler;
     @Autowired
     CaptchaFilter captchaFilter;
+    //注入 JwtAuthenticationFilter
+    @Autowired
+    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Autowired
+    JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    @Bean
+    JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager());
+        return jwtAuthenticationFilter;
+    }
     //定义静态资源 和 放行的路径
     private static final String[] URL_WHITELIST = {
 
@@ -62,8 +71,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(URL_WHITELIST)
                 .permitAll()
                 .anyRequest().authenticated()
+                //异常处理器 添加认证失败异常处理器和权限不足异常处理器
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
                 //添加验证码过滤器
                 .and()
+                .addFilter(jwtAuthenticationFilter())
                 .addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
         ;
     }
